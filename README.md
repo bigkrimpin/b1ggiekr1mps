@@ -8,7 +8,7 @@ Frei0r effects made (or ported) by BIG KRIMPIN.
 
 A port of the [PAL-CRT](https://github.com/LMP88959/PAL-CRT) library by the awesome [LMP88959/EMMIR](https://github.com/LMP88959)
 
-![An animated GIF showing the PAL-CRT effect](https://github.com/bigkrimpin/b1ggiekr1mps/media/pal_crt.gif?raw=true)
+![An animated GIF showing the PAL-CRT effect](https://github.com/bigkrimpin/b1ggiekr1mps/blob/master/media/pal_crt.gif?raw=true)
 
 ## LICENSE
 
