@@ -12,5 +12,5 @@ A port of the [PAL-CRT](https://github.com/LMP88959/PAL-CRT) library by the awes
 
 ## LICENSE
 
-This repository is licensed under the GPL-3.0 unless stated otherwise.
+This repository is licensed under the GPL-2.0 unless stated otherwise.
 Everything in `external/` has it's own license.
