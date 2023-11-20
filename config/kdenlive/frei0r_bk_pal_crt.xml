@@ -3,7 +3,7 @@
 <effect tag="frei0r.bk_pal_crt" id="frei0r.bk_pal_crt" type="video">
 	<name>bk_pal_crt</name>
 	<description>Applies PAL CRT effect over a source image</description>
-	<author>BIG KRIMPIN</author>
+	<author>LMP88959/EMMIR, BIG KRIMPIN</author>
 
 	<parameter type="bool" name="blend" default="0">
 		<name>Blend (with previous frame)</name>
