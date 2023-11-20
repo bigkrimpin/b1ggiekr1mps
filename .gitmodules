@@ -1,0 +1,3 @@
+[submodule "external/PAL-CRT"]
+	path = external/PAL-CRT
+	url = https://github.com/LMP88959/PAL-CRT

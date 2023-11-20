@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE kpartgui>
+<effect tag="frei0r.bk_pal_crt" id="frei0r.bk_pal_crt" type="video">
+	<name>bk_pal_crt</name>
+	<description>Applies PAL CRT effect over a source image</description>
+	<author>BIG KRIMPIN</author>
+
+	<parameter type="bool" name="blend" default="0">
+		<name>Blend (with previous frame)</name>
+	</parameter>
+
+	<parameter type="bool" name="color" default="1">
+		<name>Color</name>
+	</parameter>
+
+	<parameter type="bool" name="progressive" default="1">
+		<name>Progressive Scan</name>
+	</parameter>
+
+	<parameter type="bool" name="raw" default="0">
+		<name>Raw (turn off scaling)</name>
+	</parameter>
+
+	<parameter type="animated" name="black_point" max="100" min="0" default="0" factor="1">
+		<name>Black Point</name>
+	</parameter>
+
+	<parameter type="animated" name="white_point" max="100" min="0" default="100" factor="1">
+		<name>White Point</name>
+	</parameter>
+
+	<parameter type="animated" name="brightness" max="100" min="-100" default="0" factor="1">
+		<name>Brightness</name>
+	</parameter>
+
+	<parameter type="animated" name="contrast" max="360" min="0" default="180" factor="1">
+		<name>Contrast</name>
+	</parameter>
+
+	<parameter type="animated" name="hue" max="359" min="0" default="0" factor="1">
+		<name>Hue</name>
+	</parameter>
+
+	<parameter type="animated" name="saturation" max="110" min="-90" default="10" factor="1">
+		<name>Saturation</name>
+	</parameter>
+
+	<parameter type="animated" name="noise" max="1000" min="0" default="12" factor="1">
+		<name>Noise</name>
+	</parameter>
+
+	<parameter type="constant" name="chroma_correction" max="500" min="-500" default="0" factor="1">
+		<name>Chroma Correction</name>
+	</parameter>
+
+	<parameter type="constant" name="chroma_lag" max="8" min="-8" default="0" factor="1">
+		<name>Chroma Lag</name>
+	</parameter>
+
+	<parameter type="constant" name="color_phase_error" max="2" min="0" default="0" factor="1">
+		<name>Color Phase Error</name>
+	</parameter>
+
+	<parameter type="constant" name="scanlines" max="20" min="0" default="0" factor="1">
+		<name>Scanlines</name>
+	</parameter>
+
+	<parameter type="constant" name="xoffset" max="1000" min="0" default="0" factor="1">
+		<name>X Offset</name>
+	</parameter>
+
+	<parameter type="constant" name="yoffset" max="1000" min="0" default="0" factor="1">
+		<name>Y Offset</name>
+	</parameter>
+</effect>
+
