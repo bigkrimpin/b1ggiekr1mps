@@ -9,7 +9,12 @@ CFLAGS=-std=c99 -Wall -Wextra -pedantic -lm -Ofast $(INCLUDES)
 LDFLAGS=-L/usr/lib
 
 OBJS= \
-	src/bk_pal_crt.o \
+	bk_pal_crt.so \
+	bk_wavr.so \
+
+KDENLIVE_CONFIGS= \
+		  config/kdenlive/frei0r_bk_pal_crt.xml \
+		  config/kdenlive/frei0r_bk_wavr.xml \
 
 all: change_pal_system bk_pal_crt.so bk_wavr.so
 
@@ -29,11 +34,11 @@ bk_wavr.so: src/bk_wavr.o
 .PHONY: clean install
 
 clean:
-	$(RM) bk_pal_crt.so bk_wavr.so src/*.o external/PAL-CRT/*.o
+	$(RM) *.so src/*.o external/PAL-CRT/*.o
 
-install: bk_pal_crt.so
+install: $(OBJS)
 	mkdir -p $(DESTDIR)$(PREFIX)/share/kdenlive/effects
-	mkdir -p $(DESTDIR)$(PREFIX)/lib/frei0r-1/
+	mkdir -p $(DESTDIR)$(PREFIX)/lib/frei0r-1
 
-	cp config/kdenlive/frei0r_bk_pal_crt.xml $(DESTDIR)$(PREFIX)/share/kdenlive/effects
-	cp bk_pal_crt.so $(DESTDIR)$(PREFIX)/lib/frei0r-1/
+	cp $(KDENLIVE_CONFIGS) $(DESTDIR)$(PREFIX)/share/kdenlive/effects/
+	cp $(OBJS) $(DESTDIR)$(PREFIX)/lib/frei0r-1/

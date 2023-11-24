@@ -18,7 +18,6 @@ typedef struct wavr_instance {
 	double freq;
 	double shift;
 	double speed;
-	unsigned int count;
 } wavr_instance_t;
 
 int f0r_init()
@@ -48,13 +47,11 @@ f0r_instance_t f0r_construct(unsigned int width, unsigned int height)
 
 	inst->width = width;
 	inst->height = height;
-	inst->ampl = 50;
-	inst->freq = 50;
-	inst->shift = 1;
+	inst->ampl = 20;
+	inst->freq = 5;
+	inst->shift = 0;
 	inst->speed = 1;
 
-	inst->count = 0;
-	
 	return (f0r_instance_t)inst;
 }
 
@@ -101,7 +98,6 @@ void f0r_set_param_value(f0r_instance_t instance, f0r_param_t param,
 			inst->speed = *((double*)param);
 			break;
 	}
-	inst->shift = 0;
 }
 
 void f0r_get_param_value(f0r_instance_t instance, f0r_param_t param,
@@ -131,14 +127,11 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	double offset = 0;
 	int offset_int;
 	
-	printf("\n%f\n", inst->shift);
-
 	memset(outframe, 0x00, sizeof(uint32_t) * w * h);
 
 	for (int x = 0; x < w; x++) {
-		offset = inst->ampl * sin((2.0 * M_PI * ((double) x + inst->shift)) / inst->freq);
+		offset = (h * (inst->ampl / 100)) * sin((2.0 * M_PI * ((double) x + inst->shift)) / (w / inst->freq));
 		offset_int = offset;
-		// printf("%d, %f\n", offset_int, offset);
 		for (int y = 0; y < h; y++) {
 			if (y + offset_int < 0 || y + offset_int >= h)
 				continue;
@@ -146,18 +139,5 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 		}
 	}
 
-	for (int y = 0; y < 30; y++) {
-		for (int x = 0; x < 30; x++) {
-			if (inst->count % 3 == 0)
-				outframe[y * w + x] = 0xffff0000;
-			else if (inst->count % 3 == 1)
-				outframe[y * w + x] = 0xff00ff00;
-			else if (inst->count % 3 == 2)
-				outframe[y * w + x] = 0xff0000ff;
-		}
-	}
-
-	inst->count += 1;
-
-	inst->shift += 2.0;
+	inst->shift += inst->speed;
 }

@@ -5,15 +5,15 @@
 	<description>Makes the image do a wave</description>
 	<author>BIG KRIMPIN</author>
 
-	<parameter type="constant" name="amplitude" max="1000" min="0" default="50">
+	<parameter type="constant" name="amplitude" max="100" min="-100" default="20">
 		<name>Amplitude</name>
 	</parameter>
 
-	<parameter type="constant" name="frequency" max="1000" min="0" default="50">
+	<parameter type="constant" name="frequency" max="100" min="-100" default="5">
 		<name>Frequency</name>
 	</parameter>
 
-	<parameter type="constant" name="speed" max="100" min="0" default="1" decimals="1">
+	<parameter type="constant" name="speed" max="100" min="-100" default="1" decimals="1">
 		<name>Speed</name>
 	</parameter>
 </effect>
