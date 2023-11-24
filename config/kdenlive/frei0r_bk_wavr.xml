@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE kpartgui>
+<effect tag="frei0r.bk_wavr" id="frei0r.bk_wavr" type="video">
+	<name>bk_wavr</name>
+	<description>Makes the image do a wave</description>
+	<author>BIG KRIMPIN</author>
+
+	<parameter type="constant" name="amplitude" max="1000" min="0" default="50">
+		<name>Amplitude</name>
+	</parameter>
+
+	<parameter type="constant" name="frequency" max="1000" min="0" default="50">
+		<name>Frequency</name>
+	</parameter>
+
+	<parameter type="constant" name="speed" max="100" min="0" default="1" decimals="1">
+		<name>Speed</name>
+	</parameter>
+</effect>
+
