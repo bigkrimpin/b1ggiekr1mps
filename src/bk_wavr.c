@@ -9,6 +9,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+typedef enum {
+	WAVE_SINE,
+	WAVE_TRIANGLE,
+} waveform_t;
 
 typedef struct wavr_instance {
 	unsigned int width;
@@ -18,6 +22,7 @@ typedef struct wavr_instance {
 	double freq;
 	double shift;
 	double speed;
+	waveform_t waveform;
 } wavr_instance_t;
 
 int f0r_init()
@@ -51,6 +56,7 @@ f0r_instance_t f0r_construct(unsigned int width, unsigned int height)
 	inst->freq = 5;
 	inst->shift = 0;
 	inst->speed = 1;
+	inst->waveform = WAVE_SINE;
 
 	return (f0r_instance_t)inst;
 }
@@ -65,16 +71,21 @@ void f0r_get_param_info(f0r_param_info_t *info, int param_index)
 	switch(param_index)
 	{
 		case 0:
-			info->name = "amplitude";
+			info->name = "wave_function";
 			info->type = F0R_PARAM_DOUBLE;
 			info->explanation = "";
 			break;
 		case 1:
-			info->name = "frequency";
+			info->name = "amplitude";
 			info->type = F0R_PARAM_DOUBLE;
 			info->explanation = "";
 			break;
 		case 2:
+			info->name = "frequency";
+			info->type = F0R_PARAM_DOUBLE;
+			info->explanation = "";
+			break;
+		case 3:
 			info->name = "speed";
 			info->type = F0R_PARAM_DOUBLE;
 			info->explanation = "";
@@ -89,12 +100,23 @@ void f0r_set_param_value(f0r_instance_t instance, f0r_param_t param,
 	switch(param_index)
 	{
 		case 0:
-			inst->ampl = *((double*)param);
+			switch((int) *((double*)param))
+			{
+				case 0:
+					inst->waveform = WAVE_SINE;
+					break;
+				case 1:
+					inst->waveform = WAVE_TRIANGLE;
+					break;
+			}
 			break;
 		case 1:
-			inst->freq = *((double*)param);
+			inst->ampl = *((double*)param);
 			break;
 		case 2:
+			inst->freq = *((double*)param);
+			break;
+		case 3:
 			inst->speed = *((double*)param);
 			break;
 	}
@@ -107,15 +129,38 @@ void f0r_get_param_value(f0r_instance_t instance, f0r_param_t param,
 	switch(param_index)
 	{
 		case 0:
-			*((double*)param) = inst->ampl;
+			switch(inst->waveform)
+			{
+				case WAVE_SINE:
+					*((double*)param) = 0;
+					break;
+				case WAVE_TRIANGLE:
+					*((double*)param) = 1;
+					break;
+			}
 			break;
 		case 1:
-			*((double*)param) = inst->freq;
+			*((double*)param) = inst->ampl;
 			break;
 		case 2:
+			*((double*)param) = inst->freq;
+			break;
+		case 3:
 			*((double*)param) = inst->speed;
 			break;
 	}
+}
+
+typedef double (*wave_function)(int w, int h, double ampl, double freq, double shift, int x);
+
+double offset_sine_wave(int w, int h, double ampl, double freq, double shift, int x)
+{
+	return (h * (ampl / 100)) * sin((2.0 * M_PI * ((double) x + shift)) / (w / freq));
+}
+
+double offset_triangle_wave(int w, int h, double ampl, double freq, double shift, int x)
+{
+	return 2 * (h * (ampl / 100)) * fabs(2 * (((x + shift) / (w / freq)) - floor((x + shift)/ (w / freq) + 0.5))) - (h * (ampl / 100));
 }
 
 void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
@@ -126,11 +171,23 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	int h = inst->height;
 	double offset = 0;
 	int offset_int;
+	wave_function current_wave_function;
 	
 	memset(outframe, 0x00, sizeof(uint32_t) * w * h);
 
+	switch(inst->waveform) {
+		case WAVE_SINE:
+			current_wave_function = offset_sine_wave;
+			break;
+		case WAVE_TRIANGLE:
+			current_wave_function = offset_triangle_wave;
+			break;
+	}
+
 	for (int x = 0; x < w; x++) {
-		offset = (h * (inst->ampl / 100)) * sin((2.0 * M_PI * ((double) x + inst->shift)) / (w / inst->freq));
+		// offset = (h * (inst->ampl / 100)) * sin((2.0 * M_PI * ((double) x + inst->shift)) / (w / inst->freq));
+		offset = current_wave_function(w, h, inst->ampl, inst->freq, inst->shift, x);
+		printf("\t\t%f\n", offset);
 		offset_int = offset;
 		for (int y = 0; y < h; y++) {
 			if (y + offset_int < 0 || y + offset_int >= h)

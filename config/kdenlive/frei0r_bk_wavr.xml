@@ -5,15 +5,20 @@
 	<description>Makes the image do a wave</description>
 	<author>BIG KRIMPIN</author>
 
-	<parameter type="constant" name="amplitude" max="100" min="-100" default="20">
+	<parameter type="list" name="wave_function" default="0" paramlist="0;1">
+		<paramlistdisplay>Sine,Triangle</paramlistdisplay>
+		<name>Wave Function</name>
+	</parameter>
+
+	<parameter type="animated" name="amplitude" max="100" min="-100" default="20">
 		<name>Amplitude</name>
 	</parameter>
 
-	<parameter type="constant" name="frequency" max="100" min="-100" default="5">
+	<parameter type="animated" name="frequency" max="100" min="-100" default="5">
 		<name>Frequency</name>
 	</parameter>
 
-	<parameter type="constant" name="speed" max="100" min="-100" default="1" decimals="1">
+	<parameter type="animated" name="speed" max="100" min="-100" default="1" decimals="1">
 		<name>Speed</name>
 	</parameter>
 </effect>
