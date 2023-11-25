@@ -42,7 +42,7 @@ void f0r_get_plugin_info(f0r_plugin_info_t *wavr_info)
 	wavr_info->frei0r_version = FREI0R_MAJOR_VERSION;
 	wavr_info->major_version = 0;
 	wavr_info->minor_version = 1;
-	wavr_info->num_params = 3;
+	wavr_info->num_params = 4;
 	wavr_info->explanation = "Makes the image do a wave";
 }
 
