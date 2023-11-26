@@ -1,0 +1,11 @@
+<!DOCTYPE kpartgui>
+<generator tag="frei0r.bk_flags" id="frei0r.bk_flags">
+	<name>bk_flags</name>
+	<description>Generates pride flags</description>
+	<author>BIG KRIMPIN</author>
+	<parameter type="list" name="flag" default="0" paramlist="0;1;2;3;4">
+		<paramlistdisplay>Rainbow,Bisexual,Non-binary,Pansexual,Trans</paramlistdisplay>
+		<name>Flag</name>
+	</parameter>
+</generator>
+
