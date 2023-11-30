@@ -9,6 +9,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+/* Make sure these stay in the same order as in the XML file */
 typedef enum {
 	WAVE_SAWTOOTH,
 	WAVE_SINE,
@@ -44,7 +45,7 @@ void f0r_get_plugin_info(f0r_plugin_info_t *wavr_info)
 	wavr_info->major_version = 0;
 	wavr_info->minor_version = 1;
 	wavr_info->num_params = 4;
-	wavr_info->explanation = "Makes the image do a wave";
+	wavr_info->explanation = "Transform the image to a specified waveform";
 }
 
 f0r_instance_t f0r_construct(unsigned int width, unsigned int height)
@@ -101,18 +102,7 @@ void f0r_set_param_value(f0r_instance_t instance, f0r_param_t param,
 	switch(param_index)
 	{
 		case 0:
-			switch((int) *((double*)param))
-			{
-				case 0:
-					inst->waveform = WAVE_SAWTOOTH;
-					break;
-				case 1:
-					inst->waveform = WAVE_SINE;
-					break;
-				case 2:
-					inst->waveform = WAVE_TRIANGLE;
-					break;
-			}
+			inst->waveform = *((double*)param);
 			break;
 		case 1:
 			inst->ampl = *((double*)param);
@@ -133,18 +123,7 @@ void f0r_get_param_value(f0r_instance_t instance, f0r_param_t param,
 	switch(param_index)
 	{
 		case 0:
-			switch(inst->waveform)
-			{
-				case WAVE_SAWTOOTH:
-					*((double*)param) = 0;
-					break;
-				case WAVE_SINE:
-					*((double*)param) = 1;
-					break;
-				case WAVE_TRIANGLE:
-					*((double*)param) = 2;
-					break;
-			}
+			*((double*)param) = inst->waveform;
 			break;
 		case 1:
 			*((double*)param) = inst->ampl;
@@ -202,9 +181,7 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	}
 
 	for (int x = 0; x < w; x++) {
-		// offset = (h * (inst->ampl / 100)) * sin((2.0 * M_PI * ((double) x + inst->shift)) / (w / inst->freq));
 		offset = current_wave_function(w, h, inst->ampl, inst->freq, inst->shift, x);
-		printf("\t\t%f\n", offset);
 		offset_int = offset;
 		for (int y = 0; y < h; y++) {
 			if (y + offset_int < 0 || y + offset_int >= h)
