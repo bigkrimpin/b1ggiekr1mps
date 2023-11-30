@@ -9,6 +9,11 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+double sign(double x)
+{
+	return (x > 0) - (x < 0);
+}
+
 /* Make sure these stay in the same order as in the XML file */
 typedef enum {
 	WAVE_SAWTOOTH,
@@ -150,10 +155,9 @@ double offset_sine_wave(int w, int h, double ampl, double freq, double shift, in
 	return (h * (ampl / 100)) * sin((2.0 * M_PI * ((double) x + shift)) / (w / freq));
 }
 
-
 double offset_square_wave(int w, int h, double ampl, double freq, double shift, int x)
 {
-	return (h * (ampl / 100)) * floor(sin((2.0 * M_PI * ((double) x + shift)) / (w / freq))) + (h * (ampl / 100)) / 2;
+	return (h * (ampl / 100)) * sign(sin((2.0 * M_PI * ((double) x + shift)) / (w / freq)));
 }
 
 double offset_triangle_wave(int w, int h, double ampl, double freq, double shift, int x)
