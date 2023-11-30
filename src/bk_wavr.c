@@ -13,6 +13,7 @@
 typedef enum {
 	WAVE_SAWTOOTH,
 	WAVE_SINE,
+	WAVE_SQUARE,
 	WAVE_TRIANGLE,
 } waveform_t;
 
@@ -149,6 +150,12 @@ double offset_sine_wave(int w, int h, double ampl, double freq, double shift, in
 	return (h * (ampl / 100)) * sin((2.0 * M_PI * ((double) x + shift)) / (w / freq));
 }
 
+
+double offset_square_wave(int w, int h, double ampl, double freq, double shift, int x)
+{
+	return (h * (ampl / 100)) * floor(sin((2.0 * M_PI * ((double) x + shift)) / (w / freq))) + (h * (ampl / 100)) / 2;
+}
+
 double offset_triangle_wave(int w, int h, double ampl, double freq, double shift, int x)
 {
 	return 2 * (h * (ampl / 100)) * fabs(2 * (((x + shift) / (w / freq)) - floor((x + shift)/ (w / freq) + 0.5))) - (h * (ampl / 100));
@@ -172,6 +179,9 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 			break;
 		case WAVE_SINE:
 			current_wave_function = offset_sine_wave;
+			break;
+		case WAVE_SQUARE:
+			current_wave_function = offset_square_wave;
 			break;
 		case WAVE_TRIANGLE:
 			current_wave_function = offset_triangle_wave;
