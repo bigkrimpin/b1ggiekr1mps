@@ -28,7 +28,6 @@ typedef struct wavr_instance {
 
 	double ampl;
 	double freq;
-	double shift;
 	double speed;
 	waveform_t waveform;
 } wavr_instance_t;
@@ -62,7 +61,6 @@ f0r_instance_t f0r_construct(unsigned int width, unsigned int height)
 	inst->height = height;
 	inst->ampl = 20;
 	inst->freq = 5;
-	inst->shift = 0;
 	inst->speed = 1;
 	inst->waveform = WAVE_SINE;
 
@@ -195,7 +193,7 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	}
 
 	for (int x = 0; x < w; x++) {
-		offset = current_wave_function(w, h, inst->ampl, inst->freq, inst->shift, x);
+		offset = current_wave_function(w, h, inst->ampl, inst->freq, time * inst->speed, x);
 		offset_int = offset;
 		for (int y = 0; y < h; y++) {
 			if (y + offset_int < 0 || y + offset_int >= h)
@@ -203,6 +201,4 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 			outframe[y * w + x] = inframe[(y + offset_int) * w + x];
 		}
 	}
-
-	inst->shift += inst->speed;
 }

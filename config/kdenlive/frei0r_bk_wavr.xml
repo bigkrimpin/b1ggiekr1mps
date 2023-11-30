@@ -18,7 +18,7 @@
 		<name>Frequency</name>
 	</parameter>
 
-	<parameter type="animated" name="speed" max="100" min="-100" default="1" decimals="1">
+	<parameter type="animated" name="speed" max="1000" min="-1000" default="1" decimals="1">
 		<name>Speed</name>
 	</parameter>
 </effect>
