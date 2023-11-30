@@ -10,6 +10,7 @@
 #endif
 
 typedef enum {
+	WAVE_SAWTOOTH,
 	WAVE_SINE,
 	WAVE_TRIANGLE,
 } waveform_t;
@@ -103,9 +104,12 @@ void f0r_set_param_value(f0r_instance_t instance, f0r_param_t param,
 			switch((int) *((double*)param))
 			{
 				case 0:
-					inst->waveform = WAVE_SINE;
+					inst->waveform = WAVE_SAWTOOTH;
 					break;
 				case 1:
+					inst->waveform = WAVE_SINE;
+					break;
+				case 2:
 					inst->waveform = WAVE_TRIANGLE;
 					break;
 			}
@@ -131,11 +135,14 @@ void f0r_get_param_value(f0r_instance_t instance, f0r_param_t param,
 		case 0:
 			switch(inst->waveform)
 			{
-				case WAVE_SINE:
+				case WAVE_SAWTOOTH:
 					*((double*)param) = 0;
 					break;
-				case WAVE_TRIANGLE:
+				case WAVE_SINE:
 					*((double*)param) = 1;
+					break;
+				case WAVE_TRIANGLE:
+					*((double*)param) = 2;
 					break;
 			}
 			break;
@@ -152,6 +159,11 @@ void f0r_get_param_value(f0r_instance_t instance, f0r_param_t param,
 }
 
 typedef double (*wave_function)(int w, int h, double ampl, double freq, double shift, int x);
+
+double offset_sawtooth_wave(int w, int h, double ampl, double freq, double shift, int x)
+{
+	return (h * (ampl / 100)) * (((x + shift) / (w / freq)) - floor((1/2) + ((x + shift) / (w / freq))));
+}
 
 double offset_sine_wave(int w, int h, double ampl, double freq, double shift, int x)
 {
@@ -171,17 +183,22 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	int h = inst->height;
 	double offset = 0;
 	int offset_int;
-	wave_function current_wave_function;
+	wave_function current_wave_function = NULL;
 	
 	memset(outframe, 0x00, sizeof(uint32_t) * w * h);
 
 	switch(inst->waveform) {
+		case WAVE_SAWTOOTH:
+			current_wave_function = offset_sawtooth_wave;
+			break;
 		case WAVE_SINE:
 			current_wave_function = offset_sine_wave;
 			break;
 		case WAVE_TRIANGLE:
 			current_wave_function = offset_triangle_wave;
 			break;
+		default:
+			return;
 	}
 
 	for (int x = 0; x < w; x++) {

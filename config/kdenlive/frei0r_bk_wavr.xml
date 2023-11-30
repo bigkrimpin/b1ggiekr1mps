@@ -5,8 +5,8 @@
 	<description>Makes the image do a wave</description>
 	<author>BIG KRIMPIN</author>
 
-	<parameter type="list" name="wave_function" default="0" paramlist="0;1">
-		<paramlistdisplay>Sine,Triangle</paramlistdisplay>
+	<parameter type="list" name="wave_function" default="1" paramlist="0;1;2">
+		<paramlistdisplay>Sawtooth,Sine,Triangle</paramlistdisplay>
 		<name>Wave Function</name>
 	</parameter>
 
