@@ -6,15 +6,17 @@ INCLUDES= \
 
 CC=gcc
 CFLAGS=-std=c99 -Wall -Wextra -pedantic -lm -Ofast $(INCLUDES)
-LDFLAGS=-L/usr/lib
+LDFLAGS=-s -L/usr/lib
 
 OBJS= \
 	bk_flags.so \
 	bk_pal_crt.so \
+	bk_shadow.so \
 	bk_wavr.so \
 
 KDENLIVE_EFFECT_CONFIGS= \
 		  config/kdenlive/frei0r_bk_pal_crt.xml \
+		  config/kdenlive/frei0r_bk_shadow.xml \
 		  config/kdenlive/frei0r_bk_wavr.xml \
 
 KDENLIVE_GENERATOR_CONFIGS = \
@@ -34,6 +36,9 @@ bk_flags.so: src/bk_flags.o
 
 bk_pal_crt.so: src/bk_pal_crt.o external/PAL-CRT/pal.o external/PAL-CRT/pal_core.o external/PAL-CRT/pal_nes.o external/PAL-CRT/pal_nesrgb.o
 	$(CC) -shared -o $@ $^
+
+bk_shadow.so: src/bk_shadow.o
+	$(CC) -shared $(LDFLAGS) -o $@ $^
 
 bk_wavr.so: src/bk_wavr.o
 	$(CC) -shared -o $@ $^

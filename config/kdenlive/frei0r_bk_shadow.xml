@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE kpartgui>
+<effect tag="frei0r.bk_shadow" id="frei0r.bk_shadow" type="video">
+	<name>bk_shadow</name>
+	<description>Adds drop shadow to image</description>
+	<author>BIG KRIMPIN</author>
+
+	<parameter type="animated" name="offset_x" max="100" min="-100" default="10">
+		<name>Offset X</name>
+	</parameter>
+
+	<parameter type="animated" name="offset_y" max="100" min="-100" default="10">
+		<name>Offset Y</name>
+	</parameter>
+
+	<parameter type="animated" name="transparency" max="100" min="0" default="80">
+		<name>Transparency</name>
+	</parameter>
+
+	<parameter type="animated" name="radius" max="100" min="0" default="0">
+		<name>Blur Radius</name>
+	</parameter>
+</effect>
+
