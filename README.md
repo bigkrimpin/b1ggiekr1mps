@@ -10,6 +10,10 @@ A port of the [PAL-CRT](https://github.com/LMP88959/PAL-CRT) library by the awes
 
 ![An animated GIF showing the PAL-CRT effect](https://github.com/bigkrimpin/b1ggiekr1mps/blob/master/media/pal_crt.gif?raw=true)
 
+### Shadow
+
+Adds a drop shadow underneath the image.
+
 ### Wavr
 
 Manipulates the image to a waveform.
