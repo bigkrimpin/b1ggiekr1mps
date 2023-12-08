@@ -159,6 +159,7 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	int blurred_value_a;
 	int divide_by;
 
+	memset(inst->buff, 0x00, sizeof(uint32_t) * w * h);
 	memset(outframe, 0x00, sizeof(uint32_t) * w * h);
 
 	for (int y = 0; y < h; y++) {
@@ -169,10 +170,11 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 			shadow_x = x + inst->offset_x;
 			if (shadow_x < 0 || shadow_x >= w)
 				continue;
-			if ((inframe[y * w + x] & 0xff000000 >> 24) > 0x00)
+			if (((inframe[y * w + x] & 0xff000000) >> 24) > 0x00)
 				inst->buff[shadow_y * w + shadow_x] = transparency << 24;
 		}
 	}
+
 
 	if (inst->radius > 0) {
 		for (int y = 0; y < h; y++) {
@@ -208,8 +210,7 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	}
 
 	for (int i = 0; i < w * h; i++) {
-		if ((inframe[i] & 0xff000000 >> 24) < 0xff)
-			continue;
-		outframe[i] = inframe[i];
+		if (((inframe[i] & 0xff000000) >> 24) > 0x00)
+			outframe[i] = inframe[i];
 	}
 }
