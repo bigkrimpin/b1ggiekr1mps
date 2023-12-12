@@ -157,7 +157,6 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	int divide_by;
 
 	memset(inst->buff, 0x00, sizeof(uint32_t) * w * h);
-	memset(outframe, 0x00, sizeof(uint32_t) * w * h);
 
 	/* Generate shadow (every pixel with alpha > 0 gets shadow) */
 	for (int y = 0; y < h; y++) {
