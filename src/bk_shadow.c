@@ -153,15 +153,13 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 
 	uint8_t transparency = round(inst->transparency / 100 * 255);
 
-	int blurred_value_r;
-	int blurred_value_g;
-	int blurred_value_b;
 	int blurred_value_a;
 	int divide_by;
 
 	memset(inst->buff, 0x00, sizeof(uint32_t) * w * h);
 	memset(outframe, 0x00, sizeof(uint32_t) * w * h);
 
+	/* Generate shadow (every pixel with alpha > 0 gets shadow) */
 	for (int y = 0; y < h; y++) {
 		shadow_y = y + inst->offset_y;
 		if (shadow_y < 0 || shadow_y >= h)
@@ -175,40 +173,32 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 		}
 	}
 
+	/* Copy shadow buffer */
+	memcpy(outframe, inst->buff, sizeof(uint32_t) * w * h);
 
-	if (inst->radius > 0) {
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				blurred_value_r = 0;
-				blurred_value_g = 0;
-				blurred_value_b = 0;
-				blurred_value_a = 0;
-				divide_by = 0;
-				for (int kernel_y = 0 - inst->radius; kernel_y <= inst->radius; kernel_y++) {
-					if (y + kernel_y < 0 || y + kernel_y >= h)
+	/* Apply box blur to shadow */
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			blurred_value_a = 0;
+			divide_by = 0;
+			for (int kernel_y = 0 - inst->radius; kernel_y <= inst->radius; kernel_y++) {
+				if (y + kernel_y < 0 || y + kernel_y >= h)
+					continue;
+				for (int kernel_x = 0 - inst->radius; kernel_x <= inst->radius; kernel_x++) {
+					if (x + kernel_x < 0 || x + kernel_x >= w)
 						continue;
-					for (int kernel_x = 0 - inst->radius; kernel_x <= inst->radius; kernel_x++) {
-						if (x + kernel_x < 0 || x + kernel_x >= w)
-							continue;
-						blurred_value_r += inst->buff[(y + kernel_y) * w + (x + kernel_x)]       & 0xff;
-						blurred_value_g += inst->buff[(y + kernel_y) * w + (x + kernel_x)] >> 8  & 0xff;
-						blurred_value_b += inst->buff[(y + kernel_y) * w + (x + kernel_x)] >> 16 & 0xff;
-						blurred_value_a += inst->buff[(y + kernel_y) * w + (x + kernel_x)] >> 24 & 0xff;
-						divide_by++;
-					}
-				}
-				if (divide_by > 0) {
-					outframe[y * w + x] = (blurred_value_r / divide_by)
-						| ((blurred_value_g / divide_by) << 8)
-						| ((blurred_value_b / divide_by) << 16)
-						| ((blurred_value_a / divide_by) << 24);
+					blurred_value_a += inst->buff[(y + kernel_y) * w + (x + kernel_x)] >> 24 & 0xff;
+					divide_by++;
 				}
 			}
+			if (divide_by > 0) {
+				outframe[y * w + x] = (outframe[y * w + x] & 0x00ffffff)
+					| ((blurred_value_a / divide_by) << 24);
+			}
 		}
-	} else {
-		memcpy(outframe, inst->buff, sizeof(uint32_t) * w * h);
 	}
 
+	/* Copy original image over shadow */
 	for (int i = 0; i < w * h; i++) {
 		if (((inframe[i] & 0xff000000) >> 24) > 0x00)
 			outframe[i] = inframe[i];
