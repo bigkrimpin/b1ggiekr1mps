@@ -18,7 +18,8 @@ typedef struct shadow_instance {
 	unsigned int width;
 	unsigned int height;
 
-	uint32_t *buff;
+	uint32_t *buff_1;
+	uint32_t *buff_2;
 	size_t buff_size;
 
 	int offset_x;
@@ -55,7 +56,8 @@ f0r_instance_t f0r_construct(unsigned int width, unsigned int height)
 	inst->width = width;
 	inst->height = height;
 
-	inst->buff = malloc(sizeof(uint32_t) * width * height);
+	inst->buff_1 = malloc(sizeof(uint32_t) * width * height);
+	inst->buff_2 = malloc(sizeof(uint32_t) * width * height);
 
 	inst->offset_x = 10;
 	inst->offset_y = 10;
@@ -68,7 +70,8 @@ f0r_instance_t f0r_construct(unsigned int width, unsigned int height)
 void f0r_destruct(f0r_instance_t instance)
 {
 	shadow_instance_t *inst = (shadow_instance_t*)instance;
-	free(inst->buff);
+	free(inst->buff_1);
+	free(inst->buff_2);
 	free(instance);
 }
 
@@ -156,7 +159,7 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 	int blurred_value_a;
 	int divide_by;
 
-	memset(inst->buff, 0x00, sizeof(uint32_t) * w * h);
+	memset(inst->buff_1, 0x00, sizeof(uint32_t) * w * h);
 
 	/* Generate shadow (every pixel with alpha > 0 gets shadow) */
 	for (int y = 0; y < h; y++) {
@@ -168,14 +171,28 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 			if (shadow_x < 0 || shadow_x >= w)
 				continue;
 			if (((inframe[y * w + x] & 0xff000000) >> 24) > 0x00)
-				inst->buff[shadow_y * w + shadow_x] = transparency << 24;
+				inst->buff_1[shadow_y * w + shadow_x] = transparency << 24;
 		}
 	}
 
-	/* Copy shadow buffer */
-	memcpy(outframe, inst->buff, sizeof(uint32_t) * w * h);
+	/* Apply box blur to shadow horizontally */
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			blurred_value_a = 0;
+			divide_by = 0;
+			for (int kernel_x = 0 - inst->radius; kernel_x <= inst->radius; kernel_x++) {
+				if (x + kernel_x < 0 || x + kernel_x >= w)
+					continue;
+				blurred_value_a += inst->buff_1[y * w + (x + kernel_x)] >> 24 & 0xff;
+				divide_by++;
+			}
+			if (divide_by > 0) {
+				inst->buff_2[y * w + x] = (blurred_value_a / divide_by) << 24;
+			}
+		}
+	}
 
-	/* Apply box blur to shadow */
+	/* Apply box blur to shadow vertically */
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
 			blurred_value_a = 0;
@@ -183,16 +200,12 @@ void f0r_update(f0r_instance_t instance, double time, const uint32_t *inframe,
 			for (int kernel_y = 0 - inst->radius; kernel_y <= inst->radius; kernel_y++) {
 				if (y + kernel_y < 0 || y + kernel_y >= h)
 					continue;
-				for (int kernel_x = 0 - inst->radius; kernel_x <= inst->radius; kernel_x++) {
-					if (x + kernel_x < 0 || x + kernel_x >= w)
-						continue;
-					blurred_value_a += inst->buff[(y + kernel_y) * w + (x + kernel_x)] >> 24 & 0xff;
-					divide_by++;
-				}
+				blurred_value_a += inst->buff_2[(y + kernel_y) * w + x] >> 24 & 0xff;
+				divide_by++;
 			}
 			if (divide_by > 0) {
-				outframe[y * w + x] = (outframe[y * w + x] & 0x00ffffff)
-					| ((blurred_value_a / divide_by) << 24);
+				// for now just use black as the color
+				outframe[y * w + x] = 0x000000 | ((blurred_value_a / divide_by) << 24);
 			}
 		}
 	}
